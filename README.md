@@ -1,12 +1,12 @@
-# Host Your CV on AWS — __ROLL__
+# Host Your CV on AWS — 23l-3050
 
 | | |
 |---|---|
-| Roll number | __ROLL__ |
+| Roll number | 23l-3050 |
 | Region | REGION-HERE |
 | EC2 site | http://EC2-PUBLIC-IP/ |
 | Lambda site | https://XXXXXXXX.lambda-url.REGION.on.aws/ |
-| S3 bucket | __BUCKET__ (private) |
+| S3 bucket | cv-3050 (private) |
 
 ## 1. Architecture
 
@@ -17,15 +17,15 @@ flowchart LR
         subgraph A["Path A · EC2 (HTTP)"]
             SG[Security group<br/>80 from 0.0.0.0/0<br/>22 from my /32]
             EC2[EC2 t3.micro · AL2023<br/>Apache + cv-sync.timer]
-            R1[cv-ec2-role-__ROLL__<br/>GetObject site/* + ListBucket prefix site/]
+            R1[cv-ec2-role-23l-3050<br/>GetObject site/* + ListBucket prefix site/]
         end
         subgraph B["Path B · Lambda (HTTPS)"]
             URL[Function URL<br/>auth NONE]
-            FN[cv-func-__ROLL__<br/>Python]
-            R2[cv-lambda-role-__ROLL__<br/>GetObject site/* + basic logging]
+            FN[cv-func-23l-3050<br/>Python]
+            R2[cv-lambda-role-23l-3050<br/>GetObject site/* + basic logging]
             CW[CloudWatch Logs<br/>7-day retention]
         end
-        S3[(S3 __BUCKET__<br/>Block Public Access ON · versioned<br/>site/index.html · style.css · cv.pdf)]
+        S3[(S3 cv-3050<br/>Block Public Access ON · versioned<br/>site/index.html · style.css · cv.pdf)]
     end
     V -- "http://IP/" --> SG --> EC2
     EC2 -. "aws s3 sync every 3 min<br/>(role creds via IMDSv2)" .-> S3
@@ -47,10 +47,10 @@ Run on the instance (Instance Connect / SSH):
 
 ```text
 PASTE OUTPUT HERE, e.g.
-[ec2-user@ip-172-31-x-x ~]$ aws s3 rm s3://__BUCKET__/site/style.css
-delete failed: s3://__BUCKET__/site/style.css An error occurred (AccessDenied) when calling the DeleteObject operation: User: arn:aws:sts::ACCOUNT:assumed-role/cv-ec2-role-__ROLL__/i-0abc... is not authorized to perform: s3:DeleteObject ...
-[ec2-user@ip-172-31-x-x ~]$ aws s3 cp /etc/hostname s3://__BUCKET__/site/style.css
-upload failed: ../../etc/hostname to s3://__BUCKET__/site/style.css An error occurred (AccessDenied) when calling the PutObject operation: ...
+[ec2-user@ip-172-31-x-x ~]$ aws s3 rm s3://cv-3050/site/style.css
+delete failed: s3://cv-3050/site/style.css An error occurred (AccessDenied) when calling the DeleteObject operation: User: arn:aws:sts::ACCOUNT:assumed-role/cv-ec2-role-23l-3050/i-0abc... is not authorized to perform: s3:DeleteObject ...
+[ec2-user@ip-172-31-x-x ~]$ aws s3 cp /etc/hostname s3://cv-3050/site/style.css
+upload failed: ../../etc/hostname to s3://cv-3050/site/style.css An error occurred (AccessDenied) when calling the PutObject operation: ...
 ```
 
 ## 3. Last 10 lines of /var/log/cv-sync.log
@@ -65,7 +65,7 @@ PASTE OUTPUT OF:  sudo tail -n 10 /var/log/cv-sync.log
 README.md              this file
 collect-evidence.sh    evidence script (usage: ./collect-evidence.sh <bucket> <ec2-address> <lambda-address>)
 evidence.txt           output of my own run
-site/                  index.html, style.css, cv.pdf  (uploaded to s3://__BUCKET__/site/)
+site/                  index.html, style.css, cv.pdf  (uploaded to s3://cv-3050/site/)
 ec2/user-data.sh       first-boot script: Apache, sync script, systemd timer
 ec2/sync-cv.sh         S3 -> web root sync + footer stamping + log line
 lambda/lambda_function.py   Lambda handler (BUCKET and PREFIX from environment)
