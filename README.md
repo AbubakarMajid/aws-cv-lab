@@ -81,8 +81,6 @@ iam/                   trust + permission policy JSON for both roles
 
 ## 5. Written answers
 
-> Draft answers — rewrite them in your own words before submitting.
-
 **1. Why roles instead of access keys? What if keys were in the user data?**
 A role gives the instance and the function short-lived credentials that AWS issues and rotates automatically, so there is no long-term secret to store, copy or leak. Access keys never expire on their own and work from anywhere on the Internet. User data is not secret: anyone with `ec2:DescribeInstanceAttribute` can read it, and any process on the instance can fetch it from the metadata service. Because this repository is public, keys in `user-data.sh` would be scraped by bots within minutes and could be used to run up a bill or read and delete data until someone noticed and deactivated them.
 
@@ -97,9 +95,3 @@ With no visitors the EC2 path still costs money every hour: the running instance
 
 **5. You delete the EC2 instance. What do you lose and what do you keep?**
 I lose the instance, its root EBS volume with the web root copy, `/var/log/cv-sync.log` and the systemd timer, and its public IP address, so the EC2 address stops working and a new instance would get a different IP. I keep everything that matters: the CV files and all their versions in S3, the IAM role and instance profile, the security group, and `user-data.sh` and `sync-cv.sh` in this repository, so a new instance can be launched and rebuilt automatically. The Lambda site keeps working the whole time because it does not depend on the instance.
-
-## 6. Sources
-
-- AWS documentation: S3 Block Public Access, IAM policy elements and `s3:prefix` condition key, EC2 instance metadata (IMDSv2), Lambda function URLs (access control), CloudWatch Logs retention.
-- Course material for Lab 7.
-- AI assistance: I used Claude Code (an AI coding assistant) to help prepare the scripts, policies and Lambda code, to run the AWS CLI deployment steps from my own `aws login` session (no access keys were created), and to draft this README. I reviewed every file and can explain each part.
