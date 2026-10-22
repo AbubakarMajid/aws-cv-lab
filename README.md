@@ -95,3 +95,9 @@ With no visitors the EC2 path still costs money every hour: the running instance
 
 **5. You delete the EC2 instance. What do you lose and what do you keep?**
 I lose the instance, its root EBS volume with the web root copy, `/var/log/cv-sync.log` and the systemd timer, and its public IP address, so the EC2 address stops working and a new instance would get a different IP. I keep everything that matters: the CV files and all their versions in S3, the IAM role and instance profile, the security group, and `user-data.sh` and `sync-cv.sh` in this repository, so a new instance can be launched and rebuilt automatically. The Lambda site keeps working the whole time because it does not depend on the instance.
+
+## 6. Sources
+
+- AWS documentation: S3 Block Public Access, IAM policy elements and `s3:prefix` condition key, EC2 instance metadata (IMDSv2), Lambda function URLs (access control), CloudWatch Logs retention.
+- Course material for Lab 7.
+- AI assistance: I used Claude Code (an AI coding assistant) to help prepare the scripts, policies and Lambda code, to run the AWS CLI deployment steps from my own `aws login` session (no access keys were created), and to draft this README. I reviewed every file and can explain each part.
