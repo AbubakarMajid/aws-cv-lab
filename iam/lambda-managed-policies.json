@@ -1,0 +1,6 @@
+{
+  "AttachedManagedPolicies": [
+    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  ],
+  "Note": "AWS managed basic-logging policy (CloudWatch Logs). It is the only allowed exception to the no-wildcard rule."
+}

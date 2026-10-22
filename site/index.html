@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abubakar FULL-SURNAME – CV</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="cv">
+    <header class="cv-header">
+      <h1>Abubakar FULL-SURNAME</h1>
+      <p class="meta">
+        Roll number: <strong>__ROLL__</strong> ·
+        Email: <a href="mailto:your.email@example.com">your.email@example.com</a>
+      </p>
+      <p class="tagline">Software Engineering student · AI implementation &amp; backend engineer</p>
+      <a class="download" href="/cv.pdf" download>Download CV (PDF)</a>
+    </header>
+
+    <section id="education">
+      <h2>Education</h2>
+      <div class="item">
+        <h3>BS Software Engineering</h3>
+        <p class="sub">Your University · 20XX – present</p>
+        <p>Relevant courses: Cloud Computing, Deep Learning for Perception, Software Design.</p>
+      </div>
+    </section>
+
+    <section id="skills">
+      <h2>Skills</h2>
+      <ul class="skills">
+        <li>Python, FastAPI</li>
+        <li>Supabase / PostgreSQL</li>
+        <li>Docker, Nginx, Linux (Ubuntu)</li>
+        <li>AWS (EC2, S3, IAM, Lambda), DigitalOcean</li>
+        <li>n8n automation, LLM / multi-agent systems</li>
+      </ul>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <div class="item">
+        <h3>CV hosting on AWS (this site)</h3>
+        <p>Private S3 bucket served two ways: Apache on EC2 with a scheduled sync, and a Lambda function URL. Least-privilege IAM roles, no access keys.</p>
+      </div>
+      <div class="item">
+        <h3>Production AI writing backends</h3>
+        <p>Deployed FastAPI backends for AI writing products on Ubuntu VPS with Docker and Nginx.</p>
+      </div>
+    </section>
+
+    <footer>Hosted on: {{HOSTED_ON}}</footer>
+  </main>
+</body>
+</html>
