@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Roll number | 23l-3050 |
-| Region | REGION-HERE |
-| EC2 site | http://EC2-PUBLIC-IP/ |
-| Lambda site | https://XXXXXXXX.lambda-url.REGION.on.aws/ |
+| Region | ap-southeast-2 |
+| EC2 site | http://13.210.93.80/ |
+| Lambda site | https://wi622ihnnnb3yho7kri353x5v40gvgwg.lambda-url.ap-southeast-2.on.aws/ |
 | S3 bucket | cv-23l-3050 (private) |
 
 ## 1. Architecture
@@ -13,7 +13,7 @@
 ```mermaid
 flowchart LR
     V[Visitor's browser]
-    subgraph AWS["AWS account · REGION-HERE"]
+    subgraph AWS["AWS account · ap-southeast-2"]
         subgraph A["Path A · EC2 (HTTP)"]
             SG[Security group<br/>80 from 0.0.0.0/0<br/>22 from my /32]
             EC2[EC2 t3.micro · AL2023<br/>Apache + cv-sync.timer]
@@ -43,20 +43,27 @@ flowchart LR
 
 ## 2. Access denied from the instance (section 4)
 
-Run on the instance (Instance Connect / SSH):
+Run on the instance over SSH. The only credentials there are the temporary ones from the instance role (there is no `~/.aws/credentials`):
 
 ```text
-PASTE OUTPUT HERE, e.g.
-[ec2-user@ip-172-31-x-x ~]$ aws s3 rm s3://cv-23l-3050/site/style.css
-delete failed: s3://cv-23l-3050/site/style.css An error occurred (AccessDenied) when calling the DeleteObject operation: User: arn:aws:sts::ACCOUNT:assumed-role/cv-ec2-role-23l-3050/i-0abc... is not authorized to perform: s3:DeleteObject ...
-[ec2-user@ip-172-31-x-x ~]$ aws s3 cp /etc/hostname s3://cv-23l-3050/site/style.css
-upload failed: ../../etc/hostname to s3://cv-23l-3050/site/style.css An error occurred (AccessDenied) when calling the PutObject operation: ...
+[ec2-user@ip-172-31-37-87 ~]$ aws s3 rm s3://cv-23l-3050/site/style.css
+delete failed: s3://cv-23l-3050/site/style.css An error occurred (AccessDenied) when calling the DeleteObject operation: User: arn:aws:sts::783951397218:assumed-role/cv-ec2-role-23l-3050/i-0ff58205417641706 is not authorized to perform: s3:DeleteObject on resource: "arn:aws:s3:::cv-23l-3050/site/style.css" because no identity-based policy allows the s3:DeleteObject action
+[ec2-user@ip-172-31-37-87 ~]$ aws s3 cp /etc/hostname s3://cv-23l-3050/site/style.css
+upload failed: ../../etc/hostname to s3://cv-23l-3050/site/style.css An error occurred (AccessDenied) when calling the PutObject operation: User: arn:aws:sts::783951397218:assumed-role/cv-ec2-role-23l-3050/i-0ff58205417641706 is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::cv-23l-3050/site/style.css" because no identity-based policy allows the s3:PutObject action
+[ec2-user@ip-172-31-37-87 ~]$ aws s3 ls s3://cv-23l-3050/
+aws: [ERROR]: An error occurred (AccessDenied) when calling the ListObjectsV2 operation: User: arn:aws:sts::783951397218:assumed-role/cv-ec2-role-23l-3050/i-0ff58205417641706 is not authorized to perform: s3:ListBucket on resource: "arn:aws:s3:::cv-23l-3050" because no identity-based policy allows the s3:ListBucket action
 ```
+
+The last one is denied too because listing is only allowed with the prefix `site/`.
 
 ## 3. Last 10 lines of /var/log/cv-sync.log
 
 ```text
-PASTE OUTPUT OF:  sudo tail -n 10 /var/log/cv-sync.log
+[ec2-user@ip-172-31-37-87 ~]$ sudo tail -n 10 /var/log/cv-sync.log
+2026-10-22 10:45:30 UTC sync=OK instance=i-0ff58205417641706 files=3
+2026-10-22 10:48:08 UTC sync=OK instance=i-0ff58205417641706 files=3
+2026-10-22 10:51:01 UTC sync=OK instance=i-0ff58205417641706 files=3
+2026-10-22 10:54:08 UTC sync=OK instance=i-0ff58205417641706 files=3
 ```
 
 ## 4. Repository layout
@@ -95,4 +102,4 @@ I lose the instance, its root EBS volume with the web root copy, `/var/log/cv-sy
 
 - AWS documentation: S3 Block Public Access, IAM policy elements and `s3:prefix` condition key, EC2 instance metadata (IMDSv2), Lambda function URLs (access control), CloudWatch Logs retention.
 - Course material for Lab 7.
-- REPLACE: say here which parts you adapted and from where (including any AI assistance, as required by your instructor's rule).
+- AI assistance: I used Claude Code (an AI coding assistant) to help prepare the scripts, policies and Lambda code, to run the AWS CLI deployment steps from my own `aws login` session (no access keys were created), and to draft this README. I reviewed every file and can explain each part.
