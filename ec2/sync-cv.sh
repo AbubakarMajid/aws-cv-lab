@@ -4,7 +4,7 @@
 # Credentials come from the instance role via IMDSv2. There are no access keys here.
 set -u
 
-BUCKET="cv-3050"
+BUCKET="cv-23l-3050"
 PREFIX="site/"
 STAGING="/opt/cv/site"        # raw copy of S3 (placeholder untouched)
 WEBROOT="/var/www/html"       # what Apache serves

@@ -6,7 +6,7 @@
 | Region | REGION-HERE |
 | EC2 site | http://EC2-PUBLIC-IP/ |
 | Lambda site | https://XXXXXXXX.lambda-url.REGION.on.aws/ |
-| S3 bucket | cv-3050 (private) |
+| S3 bucket | cv-23l-3050 (private) |
 
 ## 1. Architecture
 
@@ -25,7 +25,7 @@ flowchart LR
             R2[cv-lambda-role-23l-3050<br/>GetObject site/* + basic logging]
             CW[CloudWatch Logs<br/>7-day retention]
         end
-        S3[(S3 cv-3050<br/>Block Public Access ON · versioned<br/>site/index.html · style.css · cv.pdf)]
+        S3[(S3 cv-23l-3050<br/>Block Public Access ON · versioned<br/>site/index.html · style.css · cv.pdf)]
     end
     V -- "http://IP/" --> SG --> EC2
     EC2 -. "aws s3 sync every 3 min<br/>(role creds via IMDSv2)" .-> S3
@@ -47,10 +47,10 @@ Run on the instance (Instance Connect / SSH):
 
 ```text
 PASTE OUTPUT HERE, e.g.
-[ec2-user@ip-172-31-x-x ~]$ aws s3 rm s3://cv-3050/site/style.css
-delete failed: s3://cv-3050/site/style.css An error occurred (AccessDenied) when calling the DeleteObject operation: User: arn:aws:sts::ACCOUNT:assumed-role/cv-ec2-role-23l-3050/i-0abc... is not authorized to perform: s3:DeleteObject ...
-[ec2-user@ip-172-31-x-x ~]$ aws s3 cp /etc/hostname s3://cv-3050/site/style.css
-upload failed: ../../etc/hostname to s3://cv-3050/site/style.css An error occurred (AccessDenied) when calling the PutObject operation: ...
+[ec2-user@ip-172-31-x-x ~]$ aws s3 rm s3://cv-23l-3050/site/style.css
+delete failed: s3://cv-23l-3050/site/style.css An error occurred (AccessDenied) when calling the DeleteObject operation: User: arn:aws:sts::ACCOUNT:assumed-role/cv-ec2-role-23l-3050/i-0abc... is not authorized to perform: s3:DeleteObject ...
+[ec2-user@ip-172-31-x-x ~]$ aws s3 cp /etc/hostname s3://cv-23l-3050/site/style.css
+upload failed: ../../etc/hostname to s3://cv-23l-3050/site/style.css An error occurred (AccessDenied) when calling the PutObject operation: ...
 ```
 
 ## 3. Last 10 lines of /var/log/cv-sync.log
@@ -65,7 +65,7 @@ PASTE OUTPUT OF:  sudo tail -n 10 /var/log/cv-sync.log
 README.md              this file
 collect-evidence.sh    evidence script (usage: ./collect-evidence.sh <bucket> <ec2-address> <lambda-address>)
 evidence.txt           output of my own run
-site/                  index.html, style.css, cv.pdf  (uploaded to s3://cv-3050/site/)
+site/                  index.html, style.css, cv.pdf  (uploaded to s3://cv-23l-3050/site/)
 ec2/user-data.sh       first-boot script: Apache, sync script, systemd timer
 ec2/sync-cv.sh         S3 -> web root sync + footer stamping + log line
 lambda/lambda_function.py   Lambda handler (BUCKET and PREFIX from environment)
